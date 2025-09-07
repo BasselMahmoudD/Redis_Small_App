@@ -1,0 +1,15 @@
+{
+  "name": "my-nodejs-app",
+  "version": "1.0.0",
+  "description": "A Node.js application to manage photos.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "redis": "^5.8.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
