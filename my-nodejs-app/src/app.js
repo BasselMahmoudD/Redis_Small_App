@@ -5,11 +5,16 @@ const app = express();
 const Redis = require('redis');
 const PORT = process.env.PORT || 3005;
 const redisClient = Redis.createClient();
+const pubClient = Redis.createClient();
+const subClient = Redis.createClient();
 const ExpirationTime = 3600
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-redisClient.connect().catch(console.error); 
 
+
+Promise.all([
+     redisClient.connect(),
+    pubClient.connect(),
+    subClient.connect()
+]).catch(console.error);
 
 // GET /photos - fetch all photos
 app.get("/photos", async (req, res) => {
@@ -37,6 +42,26 @@ app.get("/photos/:id", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch photo", details: error.message });
     }
 });
+
+//publish message by Redis
+try{
+    setInterval(()=>
+{
+    const now = new Date();
+    const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+pubClient.publish("Chat" , "Hello Basel , Date :" + formattedDate)
+},3000)
+}catch(error) {console.log(error);}
+
+
+//subscribe message by Redis
+
+try{subClient.subscribe("Chat" , (message)=>{
+    console.log("New message :" , message);
+})}catch(error){
+console.log(error);
+
+}
 
 //Cache Function to get and set
 
